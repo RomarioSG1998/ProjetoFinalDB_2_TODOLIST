@@ -1,9 +1,9 @@
-# Projeto Capstone - API de Gestão de Equipe e Tarefas
+# Projeto Capstone - Backend To-Do List (Banco de Dados II - Jala University)
 
 > [!IMPORTANT]
 > **Mensagem para João:** Seu código original foi mantido integralmente na pasta `caps` (legado). No entanto, seguindo as melhores práticas de desenvolvimento, o ideal é que você pegue esse código e o organize nas novas pastas: `controller`, `model`, `repository` e `service`. Isso garante uma aplicação mais escalável e fácil de manter!
 
-Este projeto é uma API Spring Boot para gerenciar usuários e tarefas, utilizando PostgreSQL como banco de dados através de containers Docker.
+Este projeto trata-se do backend (mais API) do aplicativo **To-Do List** da disciplina de **Banco de Dados II** da **Jala University**. Ele utiliza Spring Boot e PostgreSQL através de containers Docker para gerenciar usuários e tarefas.
 
 ## 🚀 Como Começar
 
