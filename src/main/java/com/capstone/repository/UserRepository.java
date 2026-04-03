@@ -1,5 +1,6 @@
-package caps;
+package com.capstone.repository;
 
+import com.capstone.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
