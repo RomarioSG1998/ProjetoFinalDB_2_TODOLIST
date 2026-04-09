@@ -1,4 +1,4 @@
-# Legacy Package (caps)
+# Legacy Package (caps_legado)
 
 Este diretório contém a estrutura original e "legada" do projeto.
 

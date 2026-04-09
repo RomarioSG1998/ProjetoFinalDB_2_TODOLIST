@@ -1,6 +1,9 @@
 package com.capstone.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,12 +14,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Username não pode ficar em branco")
+    @Size(min = 3, max = 50, message = "Username deve ter entre 3 e 50 caracteres")
     @Column(length = 50, nullable = false)
     private String username;
 
+    @NotBlank(message = "E-mail não pode ficar em branco")
+    @Email(message = "E-mail com formato inválido")
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "A senha não pode ficar em branco")
+    @Size(min = 6, message = "A senha deve conter no mínimo 6 caracteres")
     @Column(name = "password_hash", columnDefinition = "TEXT", nullable = false)
     private String passwordHash;
 
