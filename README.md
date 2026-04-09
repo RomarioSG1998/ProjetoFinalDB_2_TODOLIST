@@ -1,55 +1,68 @@
 # Projeto Capstone - Backend To-Do List (Banco de Dados II - Jala University)
 
 > [!IMPORTANT]
-> **Aviso sobre Código Legado:** O código original foi mantido intocado na pasta `caps` para não haver perda de dados. Porém, a aplicação principal agora roda o Spring Boot pela estrutura da raiz `com.capstone` com todas as regras de negócio corretamente isoladas nas camadas de "Controller", "Model", "Repository", "Service" e "Validation".
+> **Aviso:** A aplicação utiliza a estrutura MVC completa na raiz `com.capstone` isolando apropriadamente as camadas de "Controller", "Model", "Repository", "Service" e "Validation".
 
-Este projeto trata-se do backend (mais API) do aplicativo **To-Do List** da disciplina de **Banco de Dados II** da **Jala University**. Ele utiliza Spring Boot e PostgreSQL através de containers Docker para gerenciar usuários e tarefas.
+Este projeto é o **Backend (REST API)** do aplicativo **To-Do List** da disciplina de Banco de Dados II da Jala University. Ele utiliza Spring Boot (Java) e um container Docker com um banco PostgreSQL.
 
-## 🚀 Como Começar
+Esta documentação foi reformulada como um **Guia de Integração** para auxiliar o time de Frontend (fala, Maycon!) no consumo rápido e objetivo das APIs para conectar a interface.
 
-### 1. Preparação do Ambiente (Banco de Dados)
-O banco de dados roda em um container Docker para facilitar a configuração.
-Certifique-se de ter o Docker e o Docker Compose instalados.
+---
 
-Na raiz do projeto, execute:
+## 🚀 Guia Rápido de Instalação (Ambiente Local)
+
+### 1. Subindo o Banco de Dados
+Certifique-se de ter o Docker instalado e rodando. Na raiz do projeto, suba o contêiner do PostgreSQL via terminal:
 ```bash
 docker compose up -d
 ```
-*O banco estará disponível em `localhost:5433` (User/Pass: `postgres/postgres`).*
+*O banco estará operando em `localhost:5433` (Credenciais padrão: `postgres/postgres`).*
 
-### 2. Compilação e Execução
-Para garantir que todas as dependências estão corretas e o código está pronto, siga estes passos no terminal:
-
-**Primeiro, compile o projeto:**
+### 2. Rodando a API (Spring Boot)
+Instale as dependências e rode a aplicação via Maven logo em seguida:
 ```bash
 mvn clean compile
-```
-
-**Depois, rode a aplicação Spring Boot:**
-```bash
 mvn spring-boot:run
 ```
-*A API estará disponível em `http://localhost:8081`.*
+*A API ficará disponível e pronta para receber as requisições na URL base: **`http://localhost:8081`**.*
 
-## 📂 Estrutura do Projeto
+---
 
-- **`src/main/java/com/capstone`**: Estrutura padrão sugerida (Controller, Service, Repository, Model e Validation).
-- **`src/main/java/caps`**: Pasta contendo o código legado para backup.
-- **`docker-compose.yml`**: Configuração do container PostgreSQL.
+## 🔌 Guia de Integração da API para o Frontend (Maycon)
 
-## 🛠️ Testando a API
-Você pode utilizar o **Postman** ou o **DBeaver** para interagir com o sistema.
-- **Porta do Banco (PostgreSQL):** 5433
-- **Porta da API (Spring Boot):** 8081
+**URL Base:** `http://localhost:8081`
+**Formato de Envio/Retorno:** `application/json`
 
-### Principais Endpoints Disponíveis (Spring Boot):
-**Módulo de Tasks**
-- `POST /api/task` (Cria uma nova tarefa)
-- `GET /api/task` (Lista todas as tarefas)
-- `DELETE /api/task/{id}` (Exclui a tarefa)
+### 👤 Módulo de Usuários (`/api/users`)
+Responsável pelas contas contendo regras de negócio seguras (como o e-mail que não pode se repetir).
 
-**Módulo de Usuários** _(Com validações completas)_
-- `POST /api/users` (Cria um usuário)
-- `GET /api/users` (Lista todos usuários)
-- `GET /api/users/{id}` (Busca usuário por ID)
-- `DELETE /api/users/{id}` (Exclui o usuário)
+- **`POST /api/users`** - Cria um usuário.
+  - **Payload esperado:** `{"username":"Maycon", "email":"maycon@teste.com", "passwordHash":"senhaDificil123"}`
+- **`GET /api/users`** - Lista todos os usuários cadastrados.
+- **`GET /api/users/{id}`** - Busca as informações de um usuário específico.
+- **`PUT /api/users/{id}`** - Atualiza dados do usuário.
+  - **Payload esperado:** Os mesmos campos do envio (username, email e passwordHash).
+- **`DELETE /api/users/{id}`** - Exclui o usuário permanentemente do banco.
+
+### 🎨 Módulo de Categorias (`/api/categories`)
+Responsável por gerenciar os grupos e cores das atividades no kanban. Já conta com verificação Regex garantindo que as cores do Frontend entrem corretas no banco!
+
+- **`POST /api/categories`** - Cria uma categoria.
+  - **Payload esperado:** `{"name":"Trabalho", "colorCode":"#FF0000", "user":{"id": 1}}` *(Atenção Maycon: é obrigatório engatilhar o JSON com a associação do ID do usuário dono desta categoria)*.
+- **`GET /api/categories`** - Lista todas as categorias gerais.
+- **`GET /api/categories/{id}`** - Busca os detalhes de apenas uma categoria.
+- **`GET /api/categories/user/{userId}`** - **⚡ Rota Principal:** Retorna como JSON um array contendo *apenas* as categorias pertencentes a um usuário em específico.
+- **`PUT /api/categories/{id}`** - Altera o nome e cor de uma categoria.
+  - **Payload esperado:** `{"name": "Trabalho Modificado", "colorCode":"#0000FF"}`
+- **`DELETE /api/categories/{id}`** - Deleta a categoria.
+
+### 📋 Módulo de Tasks (`/api/task`)
+Módulo responsável pelas tarefas do To-Do List.
+
+> [!WARNING]
+> **Aviso GERAL para o João:** João, lembre-se que você é o encarregado pela classe `Task`! Não esqueça de programar os endpoints que estão faltando no seu `TaskController` para conseguirmos fechar o CRUD completo. **Neste momento o Maycon não consegue integrar as buscas individuais e as edições porque estão faltando o método `GET /api/task/{id}` e o método `PUT /api/task/{id}`.** Manda bala para subir isso!
+
+- **`POST /api/task`** - Insere uma tarefa no banco de dados.
+  - **Payload atual:** `{"nome": "Comprar queijo", "descricao": "Ir ao mercado CSD", "importancia": "Alta"}`
+- **`GET /api/task`** - Lista e devolve todas as tarefas da tabela.
+- **`DELETE /api/task/{id}`** - Exclui a tarefa usando o número do ID e responde com uma string de confirmação.

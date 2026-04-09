@@ -32,6 +32,15 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public User update(Long id, User updatedUser) {
+        return userRepository.findById(id).map(user -> {
+            user.setUsername(updatedUser.getUsername());
+            user.setEmail(updatedUser.getEmail());
+            user.setPasswordHash(updatedUser.getPasswordHash());
+            return save(user);
+        }).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado!"));
+    }
+
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
