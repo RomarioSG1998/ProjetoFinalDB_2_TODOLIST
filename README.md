@@ -57,12 +57,12 @@ Responsável por gerenciar os grupos e cores das atividades no kanban. Já conta
 - **`DELETE /api/categories/{id}`** - Deleta a categoria.
 
 ### 📋 Módulo de Tasks (`/api/task`)
-Módulo responsável pelas tarefas do To-Do List.
+Módulo responsável pelas tarefas do To-Do List. Todas as operações CRUD estão funcionais e incluem validação de campos obrigatórios.
 
-> [!WARNING]
-> **Aviso GERAL para o João:** João, lembre-se que você é o encarregado pela classe `Task`! Não esqueça de programar os endpoints que estão faltando no seu `TaskController` para conseguirmos fechar o CRUD completo. **Neste momento o Maycon não consegue integrar as buscas individuais e as edições porque estão faltando o método `GET /api/task/{id}` e o método `PUT /api/task/{id}`.** Manda bala para subir isso!
-
-- **`POST /api/task`** - Insere uma tarefa no banco de dados.
-  - **Payload atual:** `{"nome": "Comprar queijo", "descricao": "Ir ao mercado CSD", "importancia": "Alta"}`
-- **`GET /api/task`** - Lista e devolve todas as tarefas da tabela.
-- **`DELETE /api/task/{id}`** - Exclui a tarefa usando o número do ID e responde com uma string de confirmação.
+- **`POST /api/task`** - Insere uma nova tarefa.
+  - **Payload esperado:** `{"nome": "Comprar queijo", "descricao": "Ir ao mercado CSD", "importancia": "Alta"}`
+- **`GET /api/task`** - Lista todas as tarefas cadastradas.
+- **`GET /api/task/{id}`** - Busca os detalhes de uma tarefa específica.
+- **`PUT /api/task/{id}`** - Atualiza os dados de uma tarefa existente.
+  - **Payload esperado:** `{"nome": "Tarefa Editada", "descricao": "Nova descrição", "importancia": "Baixa"}`
+- **`DELETE /api/task/{id}`** - Exclui permanentemente a tarefa pelo ID.

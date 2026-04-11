@@ -11,13 +11,16 @@ import java.util.List;
 public class TaskController {
     
     private final TaskRepository taskRepository;
+    private final com.capstone.validation.TaskValidator taskValidator;
 
-    public TaskController(TaskRepository taskRepository) {
+    public TaskController(TaskRepository taskRepository, com.capstone.validation.TaskValidator taskValidator) {
         this.taskRepository = taskRepository;
+        this.taskValidator = taskValidator;
     }
 
     @PostMapping("/task")
     public Task salvar(@RequestBody Task task) {
+        taskValidator.validateForSave(task);
         return taskRepository.save(task);
     }
 
@@ -34,5 +37,20 @@ public class TaskController {
         } else {
             return "A task " + id + " não conseguiu ser removida! ID incorreto.";
         }
+    }
+
+    @GetMapping("/task/{id}")
+    public Task buscarPorId(@PathVariable Long id){
+        return taskRepository.findById(id).orElse(null);
+    }
+
+    @PutMapping("/task/{id}")
+    public Task atualizar(@PathVariable Long id, @RequestBody Task task){
+        if(taskRepository.existsById(id)){
+            taskValidator.validateForSave(task);
+            task.setId(id);
+            return taskRepository.save(task);
+        }
+        return null;
     }
 }
