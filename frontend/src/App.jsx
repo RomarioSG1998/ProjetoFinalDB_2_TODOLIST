@@ -74,18 +74,19 @@ function App() {
   if (!newTaskTitle.trim()) return;
 
   try {
-    const response = await axios.post("http://localhost:8080/api/tasks", {
-      title: newTaskTitle,
+    
+    const response = await axios.post("http://localhost:8080/api/task", {
+      title: newTaskTitle,      
       completed: false,
-      // Aqui usamos a categoria que você clicou na barra lateral!
-      category: selectedCategory ? { id: selectedCategory } : null,
-      user: { id: 1 } // O usuário ainda é fixo até você fazer a tela de login
+      user: { id: 1 },         
+      category: selectedCategory ? { id: selectedCategory } : null 
     });
     
     setTasks([...tasks, response.data]);
     setNewTaskTitle("");
   } catch (error) {
-    console.error("Erro ao criar tarefa:", error);
+
+    console.error("Erro ao criar tarefa. Detalhes:", error.response?.data);
   }
 };
 
