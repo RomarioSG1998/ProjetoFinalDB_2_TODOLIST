@@ -10,6 +10,8 @@ function App() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
   const [activeTab, setActiveTab] = useState("tasks");
+  const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [newTaskImportance, setNewTaskImportance] = useState("Média");
   
   // Estado para tema (claro/dark)
   const [theme, setTheme] = useState(() => {
@@ -33,11 +35,11 @@ function App() {
 
   const fetchTasks = async () => {
     try {
-      const taskResponse = await axios.get("http://localhost:8080/api/tasks");
+      const taskResponse = await axios.get("http://localhost:8081/api/task");
       setTasks(taskResponse.data);
 
       try {
-        const categoriesRes = await axios.get("http://localhost:8080/api/categories");
+        const categoriesRes = await axios.get("http://localhost:8081/api/categories");
         setCategories(Array.isArray(categoriesRes.data) ? categoriesRes.data : []);
       } catch (catError) {
         console.warn("Endpoint de categorias não encontrado");
@@ -56,10 +58,9 @@ function App() {
   if (!newCategoryName.trim()) return;
 
   try {
-    const response = await axios.post("http://localhost:8080/api/categories", {
+    const response = await axios.post("http://localhost:8081/api/categories", {
       name: newCategoryName,
-      color: "#" + Math.floor(Math.random()*16777215).toString(16),
-      // ADICIONE ISSO: O backend exige um objeto user com um id
+      colorCode: "#" + Math.floor(Math.random()*16777215).toString(16),
       user: { id: 1 } 
     });
     setCategories([...categories, response.data]);
@@ -77,12 +78,13 @@ function App() {
     
     const response = await axios.post("http://localhost:8081/api/task", {
       nome: newTaskTitle,      
-      descricao: "Criado via React",
-      importancia: "Média",    
+      descricao: newTaskDescription,
+      importancia: newTaskImportance,    
     });
     
     setTasks([...tasks, response.data]);
     setNewTaskTitle("");
+    setNewTaskImportance("Média");
     alert("Tarefa adicionada com sucesso!");
   } catch (error) {
 
@@ -94,7 +96,7 @@ function App() {
   const handleDeleteTask = async (id) => {
     if (!window.confirm("Excluir esta tarefa?")) return;
     try {
-      await axios.delete(`http://localhost:8080/api/tasks/${id}`);
+      await axios.delete(`http://localhost:8081/api/task/${id}`);
       setTasks(prev => prev.filter(task => task.id !== id));
     } catch (error) {
       console.error("Erro ao excluir:", error);
@@ -107,6 +109,20 @@ function App() {
 
   const completedCount = tasks.filter(t => t.completed).length;
   const pendingCount = tasks.filter(t => !t.completed).length;
+  const handleToggleComplete = async (task) => {
+  try {
+    const updatedTask = { 
+      ...task, 
+      descricao: task.descricao + " [CONCLUÍDA]" 
+    };
+
+    await axios.put(`http://localhost:8081/api/task/${task.id}`, updatedTask);
+    
+    setTasks(tasks.map(t => t.id === task.id ? updatedTask : t));
+  } catch (error) {
+    console.error("Erro ao atualizar tarefa:", error);
+  }
+};
 
   if (loading) {
     return (
@@ -202,6 +218,19 @@ function App() {
                     onChange={(e) => setNewTaskTitle(e.target.value)}
                     className="modern-input"
                   />
+                  <input 
+                    type="text" 
+                    placeholder="Descrição" 
+                    value={newTaskDescription} 
+                    onChange={(e) => setNewTaskDescription(e.target.value)} 
+                    className="modern-input"
+                  />
+                  <select value={newTaskImportance} onChange={(e) => setNewTaskImportance(e.target.value)} 
+                  className="modern-input">
+                    <option value="Alta">Alta</option>
+                    <option value="Média">Média</option>
+                    <option value="Baixa">Baixa</option>
+                  </select>
                   <button type="submit" className="btn-primary-modern">
                     <span className="btn-icon">+</span>
                     Adicionar Tarefa
@@ -273,7 +302,7 @@ function App() {
                       type="checkbox" 
                       id={`task-${task.id}`}
                       checked={task.completed}
-                      onChange={() => handleToggleTask(task.id)}
+                      onChange={() => handleToggleComplete(task)}
                       className="task-checkbox"
                     />
                     <label htmlFor={`task-${task.id}`} className="checkbox-custom">
@@ -284,7 +313,7 @@ function App() {
                   </div>
                   
                   <div className="task-content">
-                    <h4 className="task-title">{task.title}</h4>
+                    <h4 className="task-title">{task.nome}</h4>
                     <div className="task-meta">
                       {task.category && (
                         <span 
@@ -297,6 +326,9 @@ function App() {
                           {task.category.name}
                         </span>
                       )}
+                      <span className={`importance-tag ${task.importancia.toLowerCase()}`}>
+                          {task.importancia}
+                      </span>
                       <span className={`task-status ${task.completed ? 'done' : 'pending'}`}>
                         {task.completed ? 'Concluída' : 'Pendente'}
                       </span>
