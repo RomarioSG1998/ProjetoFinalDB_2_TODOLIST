@@ -75,18 +75,19 @@ function App() {
 
   try {
     
-    const response = await axios.post("http://localhost:8080/api/task", {
-      title: newTaskTitle,      
-      completed: false,
-      user: { id: 1 },         
-      category: selectedCategory ? { id: selectedCategory } : null 
+    const response = await axios.post("http://localhost:8081/api/task", {
+      nome: newTaskTitle,      
+      descricao: "Criado via React",
+      importancia: "Média",    
     });
     
     setTasks([...tasks, response.data]);
     setNewTaskTitle("");
+    alert("Tarefa adicionada com sucesso!");
   } catch (error) {
 
     console.error("Erro ao criar tarefa. Detalhes:", error.response?.data);
+    alert("Erro ao salvar. Verifique o console (F12).");
   }
 };
 
