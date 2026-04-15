@@ -92,6 +92,28 @@ function App() {
     alert("Erro ao salvar. Verifique o console (F12).");
   }
 };
+const handleToggleComplete = async (task) => {
+  try {
+    const isCompleted = task.descricao && task.descricao.includes(" [CONCLUÍDA]");
+    let novaDescricao;
+
+    if (isCompleted) {
+      novaDescricao = task.descricao.replace(" [CONCLUÍDA]", "");
+    } else {
+      novaDescricao = (task.descricao || "") + " [CONCLUÍDA]";
+    }
+
+    const updatedTask = { ...task, descricao: novaDescricao };
+
+    const response = await axios.put(`http://localhost:8081/api/task/${task.id}`, updatedTask);
+    
+    setTasks(prev => prev.map(t => t.id === task.id ? response.data : t));
+    
+  } catch (error) {
+    console.error("Erro ao alternar status da tarefa:", error);
+    alert("Não foi possível atualizar o status da tarefa.");
+  }
+};
 
   const handleDeleteTask = async (id) => {
     if (!window.confirm("Excluir esta tarefa?")) return;
@@ -109,20 +131,7 @@ function App() {
 
   const completedCount = tasks.filter(t => t.completed).length;
   const pendingCount = tasks.filter(t => !t.completed).length;
-  const handleToggleComplete = async (task) => {
-  try {
-    const updatedTask = { 
-      ...task, 
-      descricao: task.descricao + " [CONCLUÍDA]" 
-    };
-
-    await axios.put(`http://localhost:8081/api/task/${task.id}`, updatedTask);
-    
-    setTasks(tasks.map(t => t.id === task.id ? updatedTask : t));
-  } catch (error) {
-    console.error("Erro ao atualizar tarefa:", error);
-  }
-};
+ 
 
   if (loading) {
     return (
@@ -294,7 +303,7 @@ function App() {
               filteredTasks.map((task, index) => (
                 <div 
                   key={task.id} 
-                  className={`task-card ${task.completed ? 'completed' : ''}`}
+                 className={`task-card ${task.descricao?.includes("[CONCLUÍDA]") ? 'completed' : ''}`}
                   style={{animationDelay: `${index * 0.05}s`}}
                 >
                   <div className="task-checkbox-wrapper">
@@ -327,7 +336,7 @@ function App() {
                         </span>
                       )}
                       <span className={`importance-tag ${task.importancia.toLowerCase()}`}>
-                          {task.importancia}
+                        {task.importancia}
                       </span>
                       <span className={`task-status ${task.completed ? 'done' : 'pending'}`}>
                         {task.completed ? 'Concluída' : 'Pendente'}

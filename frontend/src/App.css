@@ -406,9 +406,10 @@ body {
 }
 
 .task-card.completed {
-  opacity: 0.7;
-  border-left-color: var(--success);
-  background: rgba(16, 185, 129, 0.05);
+  background-color: #050d15; 
+  border-left: 5px solid #2ecc71;
+  opacity: 0.7; 
+  transition: all 0.3s ease;
 }
 
 /* Checkbox */
