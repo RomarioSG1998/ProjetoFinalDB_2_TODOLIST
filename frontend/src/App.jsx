@@ -31,6 +31,7 @@ function App() {
 
   useEffect(() => { 
     fetchTasks();
+    fetchCategories();
   }, []);
 
   const fetchTasks = async () => {
@@ -52,6 +53,15 @@ function App() {
     }
   };
 
+  const fetchCategories = async () => {
+  try {
+    const response = await axios.get('http://localhost:8081/api/categories/user/1');
+    setCategories(response.data);
+  } catch (error) {
+    console.error("Erro ao carregar categorias:", error);
+  }
+};
+
 
  const handleAddCategory = async (e) => {
   e.preventDefault();
@@ -60,7 +70,7 @@ function App() {
   try {
     const response = await axios.post("http://localhost:8081/api/categories", {
       name: newCategoryName,
-      colorCode: "#" + Math.floor(Math.random()*16777215).toString(16),
+      color: "#" + Math.floor(Math.random()*16777215).toString(16),
       user: { id: 1 } 
     });
     setCategories([...categories, response.data]);
@@ -68,6 +78,22 @@ function App() {
   } catch (error) {
     console.error("Erro ao criar categoria:", error);
     alert("Erro: Verifique se o usuário com ID 1 existe no banco.");
+  }
+};
+const handleDeleteCategory = async (id) => {
+  if (!window.confirm("Tem certeza que deseja excluir esta categoria?")) return;
+  
+  try {
+    await axios.delete(`http://localhost:8081/api/categories/${id}`);
+    
+    setCategories(prev => prev.filter(cat => cat.id !== id));
+    
+    fetchTasks(); 
+    
+    alert("Categoria removida!");
+  } catch (error) {
+    console.error("Erro ao deletar categoria:", error);
+    alert("Erro ao excluir. Verifique se existem tarefas vinculadas a ela.");
   }
 };
   const handleAddTask = async (e) => {
