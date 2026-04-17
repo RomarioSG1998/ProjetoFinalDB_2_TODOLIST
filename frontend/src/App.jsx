@@ -65,19 +65,18 @@ function App() {
 
  const handleAddCategory = async (e) => {
   e.preventDefault();
-  if (!newCategoryName.trim()) return;
-
   try {
     const response = await axios.post("http://localhost:8081/api/categories", {
       name: newCategoryName,
-      color: "#" + Math.floor(Math.random()*16777215).toString(16),
+      colorCode: "#" + Math.floor(Math.random()*16777215).toString(16),
       user: { id: 1 } 
     });
     setCategories([...categories, response.data]);
     setNewCategoryName("");
+    alert("Sucesso!");
   } catch (error) {
-    console.error("Erro ao criar categoria:", error);
-    alert("Erro: Verifique se o usuário com ID 1 existe no banco.");
+    console.log("Erro detalhado do Backend:", error.response?.data);
+    alert("Erro ao criar. Olhe o console (F12) para o motivo real.");
   }
 };
 const handleDeleteCategory = async (id) => {
