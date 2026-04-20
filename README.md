@@ -36,6 +36,8 @@ mvn spring-boot:run
 ### 👤 Módulo de Usuários (`/api/users`)
 Responsável pelas contas contendo regras de negócio seguras (como o e-mail que não pode se repetir).
 
+> 🔒 **Segurança (DB Hash):** O processamento de hash das senhas e a verificação de credenciais são feitos nativamente pelo próprio banco de dados (PostgreSQL) usando a extensão `pgcrypto`. O backend em Java não manipula o hash localmente, delegando todo o processo de criptografia e checagem diretamente ao SGBD.
+
 - **`POST /api/users`** - Cria um usuário.
   - **Payload esperado:** `{"username":"Maycon", "email":"maycon@teste.com", "passwordHash":"senhaDificil123"}`
 - **`GET /api/users`** - Lista todos os usuários cadastrados.
