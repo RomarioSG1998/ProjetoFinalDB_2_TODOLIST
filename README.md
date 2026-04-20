@@ -3,6 +3,9 @@
 > [!IMPORTANT]
 > **Aviso:** A aplicação utiliza a estrutura MVC completa na raiz `com.capstone` isolando apropriadamente as camadas de "Controller", "Model", "Repository", "Service" e "Validation".
 
+> [!NOTE]
+> **Atenção Maycon:** Esta branch `main` agora incorpora todas as implementações da sua branch `mayconbranch` (incluindo o Frontend e as refatorações). A única mudança adicional que fizemos foi garantir a **preservação do hash nativo** de senhas no `UserRepository.java`, para que a segurança via banco de dados continue funcionando corretamente.
+
 Este projeto é o **Backend (REST API)** do aplicativo **To-Do List** da disciplina de Banco de Dados II da Jala University. Ele utiliza Spring Boot (Java) e um container Docker com um banco PostgreSQL.
 
 Esta documentação foi reformulada como um **Guia de Integração** para auxiliar o time de Frontend (fala, Maycon!) no consumo rápido e objetivo das APIs para conectar a interface.
