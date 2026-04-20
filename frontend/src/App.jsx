@@ -12,7 +12,7 @@ function App() {
   const [activeTab, setActiveTab] = useState("tasks");
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [newTaskImportance, setNewTaskImportance] = useState("Média");
-  
+
   // Estado para tema (claro/dark)
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'light';
@@ -29,7 +29,7 @@ function App() {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     fetchTasks();
     fetchCategories();
   }, []);
@@ -54,91 +54,98 @@ function App() {
   };
 
   const fetchCategories = async () => {
-  try {
-    const response = await axios.get('http://localhost:8081/api/categories/user/1');
-    setCategories(response.data);
-  } catch (error) {
-    console.error("Erro ao carregar categorias:", error);
-  }
-};
-
-
- const handleAddCategory = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post("http://localhost:8081/api/categories", {
-      name: newCategoryName,
-      colorCode: "#" + Math.floor(Math.random()*16777215).toString(16),
-      user: { id: 1 } 
-    });
-    setCategories([...categories, response.data]);
-    setNewCategoryName("");
-    alert("Sucesso!");
-  } catch (error) {
-    console.log("Erro detalhado do Backend:", error.response?.data);
-    alert("Erro ao criar. Olhe o console (F12) para o motivo real.");
-  }
-};
-const handleDeleteCategory = async (id) => {
-  if (!window.confirm("Tem certeza que deseja excluir esta categoria?")) return;
-  
-  try {
-    await axios.delete(`http://localhost:8081/api/categories/${id}`);
-    
-    setCategories(prev => prev.filter(cat => cat.id !== id));
-    
-    fetchTasks(); 
-    
-    alert("Categoria removida!");
-  } catch (error) {
-    console.error("Erro ao deletar categoria:", error);
-    alert("Erro ao excluir. Verifique se existem tarefas vinculadas a ela.");
-  }
-};
-  const handleAddTask = async (e) => {
-  e.preventDefault();
-  if (!newTaskTitle.trim()) return;
-
-  try {
-    
-    const response = await axios.post("http://localhost:8081/api/task", {
-      nome: newTaskTitle,      
-      descricao: newTaskDescription,
-      importancia: newTaskImportance,    
-    });
-    
-    setTasks([...tasks, response.data]);
-    setNewTaskTitle("");
-    setNewTaskImportance("Média");
-    alert("Tarefa adicionada com sucesso!");
-  } catch (error) {
-
-    console.error("Erro ao criar tarefa. Detalhes:", error.response?.data);
-    alert("Erro ao salvar. Verifique o console (F12).");
-  }
-};
-const handleToggleComplete = async (task) => {
-  try {
-    const isCompleted = task.descricao && task.descricao.includes(" [CONCLUÍDA]");
-    let novaDescricao;
-
-    if (isCompleted) {
-      novaDescricao = task.descricao.replace(" [CONCLUÍDA]", "");
-    } else {
-      novaDescricao = (task.descricao || "") + " [CONCLUÍDA]";
+    try {
+      const response = await axios.get('http://localhost:8081/api/categories/user/1');
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar categorias:", error);
     }
+  };
 
-    const updatedTask = { ...task, descricao: novaDescricao };
 
-    const response = await axios.put(`http://localhost:8081/api/task/${task.id}`, updatedTask);
-    
-    setTasks(prev => prev.map(t => t.id === task.id ? response.data : t));
-    
-  } catch (error) {
-    console.error("Erro ao alternar status da tarefa:", error);
-    alert("Não foi possível atualizar o status da tarefa.");
-  }
-};
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:8081/api/categories", {
+        name: newCategoryName,
+        colorCode: "#" + Math.floor(Math.random() * 16777215).toString(16),
+        user: { id: 1 }
+      });
+      setCategories([...categories, response.data]);
+      setNewCategoryName("");
+      alert("Sucesso!");
+    } catch (error) {
+      console.log("Erro detalhado do Backend:", error.response?.data);
+      alert("Erro ao criar. Olhe o console (F12) para o motivo real.");
+    }
+  };
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta categoria?")) return;
+
+    try {
+      await axios.delete(`http://localhost:8081/api/categories/${id}`);
+
+      setCategories(prev => prev.filter(cat => cat.id !== id));
+
+      fetchTasks();
+
+      alert("Categoria removida!");
+    } catch (error) {
+      console.error("Erro ao deletar categoria:", error);
+      alert("Erro ao excluir. Verifique se existem tarefas vinculadas a ela.");
+    }
+  };
+  const handleAddTask = async (e) => {
+    e.preventDefault();
+    if (!newTaskTitle.trim()) return;
+
+    try {
+
+      const payload = {
+        nome: newTaskTitle,
+        descricao: newTaskDescription,
+        importancia: newTaskImportance,
+        user: { id: 1 },
+      };
+
+      if (selectedCategory) {
+        payload.category = { id: selectedCategory };
+      }
+
+      const response = await axios.post("http://localhost:8081/api/task", payload);
+
+      setTasks([...tasks, response.data]);
+      setNewTaskTitle("");
+      setNewTaskImportance("Média");
+      alert("Tarefa adicionada com sucesso!");
+    } catch (error) {
+
+      console.error("Erro ao criar tarefa. Detalhes:", error.response?.data);
+      alert("Erro ao salvar. Verifique o console (F12).");
+    }
+  };
+  const handleToggleComplete = async (task) => {
+    try {
+      const isCompleted = task.descricao && task.descricao.includes(" [CONCLUÍDA]");
+      let novaDescricao;
+
+      if (isCompleted) {
+        novaDescricao = task.descricao.replace(" [CONCLUÍDA]", "");
+      } else {
+        novaDescricao = (task.descricao || "") + " [CONCLUÍDA]";
+      }
+
+      const updatedTask = { ...task, descricao: novaDescricao };
+
+      const response = await axios.put(`http://localhost:8081/api/task/${task.id}`, updatedTask);
+
+      setTasks(prev => prev.map(t => t.id === task.id ? response.data : t));
+
+    } catch (error) {
+      console.error("Erro ao alternar status da tarefa:", error);
+      alert("Não foi possível atualizar o status da tarefa.");
+    }
+  };
 
   const handleDeleteTask = async (id) => {
     if (!window.confirm("Excluir esta tarefa?")) return;
@@ -156,7 +163,7 @@ const handleToggleComplete = async (task) => {
 
   const completedCount = tasks.filter(t => t.completed).length;
   const pendingCount = tasks.filter(t => !t.completed).length;
- 
+
 
   if (loading) {
     return (
@@ -179,10 +186,10 @@ const handleToggleComplete = async (task) => {
               <p></p>
             </div>
           </div>
-          
+
           {/* BOTÃO DE TEMA */}
-          <button 
-            className="theme-toggle-btn" 
+          <button
+            className="theme-toggle-btn"
             onClick={toggleTheme}
             aria-label="Alternar tema claro/escuro"
             title={theme === 'light' ? 'Modo escuro' : 'Modo claro'}
@@ -197,14 +204,14 @@ const handleToggleComplete = async (task) => {
         <aside className="elegant-sidebar">
           {/* TABS DE NAVEGAÇÃO */}
           <div className="nav-tabs">
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'tasks' ? 'active' : ''}`}
               onClick={() => setActiveTab('tasks')}
             >
               <span className="tab-icon">📋</span>
               Tarefas
             </button>
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'categories' ? 'active' : ''}`}
               onClick={() => setActiveTab('categories')}
             >
@@ -219,21 +226,21 @@ const handleToggleComplete = async (task) => {
               <div className="sidebar-section">
                 <h3 className="section-title">Filtrar por</h3>
                 <div className="filter-chips">
-                  <button 
+                  <button
                     className={`filter-chip ${selectedCategory === null ? 'active' : ''}`}
                     onClick={() => setSelectedCategory(null)}
                   >
                     Todas
                   </button>
                   {categories.map(cat => (
-                    <button 
+                    <button
                       key={cat.id}
                       className={`filter-chip ${selectedCategory === cat.id ? 'active' : ''}`}
                       onClick={() => setSelectedCategory(cat.id)}
                     >
-                      <span 
-                        className="chip-dot" 
-                        style={{background: cat.color || '#6c5ce7'}}
+                      <span
+                        className="chip-dot"
+                        style={{ background: cat.color || '#6c5ce7' }}
                       ></span>
                       {cat.name}
                     </button>
@@ -245,22 +252,22 @@ const handleToggleComplete = async (task) => {
               <div className="sidebar-section">
                 <h3 className="section-title">Nova Tarefa</h3>
                 <form onSubmit={handleAddTask} className="modern-form">
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="O que precisa ser feito?"
                     value={newTaskTitle}
                     onChange={(e) => setNewTaskTitle(e.target.value)}
                     className="modern-input"
                   />
-                  <input 
-                    type="text" 
-                    placeholder="Descrição" 
-                    value={newTaskDescription} 
-                    onChange={(e) => setNewTaskDescription(e.target.value)} 
+                  <input
+                    type="text"
+                    placeholder="Descrição"
+                    value={newTaskDescription}
+                    onChange={(e) => setNewTaskDescription(e.target.value)}
                     className="modern-input"
                   />
-                  <select value={newTaskImportance} onChange={(e) => setNewTaskImportance(e.target.value)} 
-                  className="modern-input">
+                  <select value={newTaskImportance} onChange={(e) => setNewTaskImportance(e.target.value)}
+                    className="modern-input">
                     <option value="Alta">Alta</option>
                     <option value="Média">Média</option>
                     <option value="Baixa">Baixa</option>
@@ -277,8 +284,8 @@ const handleToggleComplete = async (task) => {
             <div className="sidebar-section">
               <h3 className="section-title">Nova Categoria</h3>
               <form onSubmit={handleAddCategory} className="modern-form">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Nome da categoria"
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
@@ -294,9 +301,9 @@ const handleToggleComplete = async (task) => {
               <div className="categories-list">
                 {categories.map(cat => (
                   <div key={cat.id} className="category-card">
-                    <div 
+                    <div
                       className="category-color-indicator"
-                      style={{background: cat.color || '#6c5ce7'}}
+                      style={{ background: cat.color || '#6c5ce7' }}
                     ></div>
                     <span className="category-name">{cat.name}</span>
                     <span className="category-count">
@@ -313,7 +320,7 @@ const handleToggleComplete = async (task) => {
         <main className="main-content">
           <div className="content-header">
             <h2 className="content-title">
-              {selectedCategory 
+              {selectedCategory
                 ? categories.find(c => c.id === selectedCategory)?.name || 'Tarefas'
                 : 'Todas as Tarefas'}
             </h2>
@@ -326,14 +333,14 @@ const handleToggleComplete = async (task) => {
           <div className="tasks-container">
             {filteredTasks.length > 0 ? (
               filteredTasks.map((task, index) => (
-                <div 
-                  key={task.id} 
-                 className={`task-card ${task.descricao?.includes("[CONCLUÍDA]") ? 'completed' : ''}`}
-                  style={{animationDelay: `${index * 0.05}s`}}
+                <div
+                  key={task.id}
+                  className={`task-card ${task.descricao?.includes("[CONCLUÍDA]") ? 'completed' : ''}`}
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div className="task-checkbox-wrapper">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       id={`task-${task.id}`}
                       checked={task.completed}
                       onChange={() => handleToggleComplete(task)}
@@ -341,16 +348,16 @@ const handleToggleComplete = async (task) => {
                     />
                     <label htmlFor={`task-${task.id}`} className="checkbox-custom">
                       <svg className="checkmark" viewBox="0 0 24 24">
-                        <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+                        <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" />
                       </svg>
                     </label>
                   </div>
-                  
+
                   <div className="task-content">
                     <h4 className="task-title">{task.nome}</h4>
                     <div className="task-meta">
                       {task.category && (
-                        <span 
+                        <span
                           className="task-category"
                           style={{
                             background: `${task.category.color}20`,
@@ -369,13 +376,13 @@ const handleToggleComplete = async (task) => {
                     </div>
                   </div>
 
-                  <button 
+                  <button
                     className="btn-delete"
                     onClick={() => handleDeleteTask(task.id)}
                     title="Excluir tarefa"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                     </svg>
                   </button>
                 </div>

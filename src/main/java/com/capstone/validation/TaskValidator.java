@@ -18,5 +18,9 @@ public class TaskValidator {
         if (task.getImportancia() == null || task.getImportancia().isBlank()) {
             throw new IllegalArgumentException("A importância da tarefa deve ser informada!");
         }
+
+        if (task.getUser() == null || task.getUser().getId() == null) {
+            throw new IllegalArgumentException("A tarefa deve estar associada a um usuário!");
+        }
     }
 }
