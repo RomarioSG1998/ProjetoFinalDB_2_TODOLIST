@@ -157,6 +157,11 @@ const filteredTasks = tasks.filter(task => {
   const completedCount = tasks.filter(t => t.completed).length;
   const pendingCount = tasks.filter(t => !t.completed).length;
  
+const [expandedTaskId, setExpandedTaskId] = useState(null);
+
+const toggleExpand = (id) => {
+  setExpandedTaskId(expandedTaskId === id ? null : id);
+};
 
   if (loading) {
     return (
@@ -311,6 +316,18 @@ const filteredTasks = tasks.filter(task => {
                       style={{background: cat.color || '#6c5ce7'}}
                     ></div>
                     <span className="category-name">{cat.name}</span>
+                    <button 
+                        className="btn-delete-small"
+                        title="Excluir categoria"
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          handleDeleteCategory(cat.id);
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                      </button>
                     <span className="category-count">
                       {tasks.filter(t => t.category?.id === cat.id).length} tarefas
                     </span>
@@ -360,6 +377,11 @@ const filteredTasks = tasks.filter(task => {
                   
                   <div className="task-content">
                     <h4 className="task-title">{task.nome}</h4>
+                   {task.descricao && (
+                      <p className="task-description-hover">
+                        {task.descricao.replace(" [CONCLUÍDA]", "")}
+                      </p>
+                    )}
                     <div className="task-meta">
                       {/* BADGE DA CATEGORIA */}
                         {task.category && (
