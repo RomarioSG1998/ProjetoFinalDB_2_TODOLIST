@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
+const API_BASE_URL = ""; // Caminho relativo para funcionar via Proxy do Nginx
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -68,7 +68,7 @@ function App() {
     try {
       const response = await axios.post(`${API_BASE_URL}/api/categories`, {
         name: newCategoryName.trim(),
-        colorCode: "#" + Math.floor(Math.random() * 16777215).toString(16),
+        colorCode: "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0"),
         user: { id: 1 }
       });
       setCategories([...categories, response.data]);

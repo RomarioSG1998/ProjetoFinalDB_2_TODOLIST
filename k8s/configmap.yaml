@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: capstone-config
+data:
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  DB_NAME: "capstone"
+  SPRING_DATASOURCE_USERNAME: "postgres"
+  SPRING_DATASOURCE_PASSWORD: "postgres"
+  VITE_API_URL: "http://backend:8081"
+  BACKEND_UPSTREAM: "backend:8081"
+  APP_CORS_ALLOWED_ORIGIN: "http://127.0.0.1:18080"
+  ALLOWED_ORIGINS: "*"
