@@ -509,7 +509,7 @@ body {
 }
 
 .task-status.done {
-  background: rgba(16, 185, 129, 0.15);
+  background: rgba(17, 204, 142, 0.15);
   color: var(--success);
 }
 

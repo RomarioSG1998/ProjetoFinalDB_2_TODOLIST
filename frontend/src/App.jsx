@@ -233,7 +233,7 @@ const filteredTasks = tasks.filter(task => {
                   >
                     <span 
                       className="chip-dot" 
-                      style={{background: cat.colorCode || '#6c5ce7'}} // CORRIGIDO: colorCode
+                      style={{background: cat.colorCode || '#6c5ce7'}} 
                     ></span>
                     {cat.name}
                   </button>
@@ -377,8 +377,8 @@ const filteredTasks = tasks.filter(task => {
                       <span className={`importance-tag ${task.importancia.toLowerCase()}`}>
                         {task.importancia}
                       </span>
-                      <span className={`task-status ${task.completed ? 'done' : 'pending'}`}>
-                        {task.completed ? 'Concluída' : 'Pendente'}
+                      <span className={`task-status ${task.descricao?.includes("[CONCLUÍDA]") ? 'done' : 'pending'}`}>
+                        {task.descricao?.includes("[CONCLUÍDA]") ? 'Concluída' : 'Pendente'}
                       </span>
                     </div>
                   </div>
