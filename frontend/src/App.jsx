@@ -29,29 +29,24 @@ function App() {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  useEffect(() => { 
-    fetchTasks();
-    fetchCategories();
-  }, []);
+ useEffect(() => { 
+  const loadData = async () => {
+    setLoading(true);
+    await Promise.all([fetchTasks(), fetchCategories()]);
+    setLoading(false);
+  };
+  loadData();
+}, []);
 
   const fetchTasks = async () => {
-    try {
-      const taskResponse = await axios.get("http://localhost:8081/api/task");
-      setTasks(taskResponse.data);
-
-      try {
-        const categoriesRes = await axios.get("http://localhost:8081/api/categories");
-        setCategories(Array.isArray(categoriesRes.data) ? categoriesRes.data : []);
-      } catch (catError) {
-        console.warn("Endpoint de categorias não encontrado");
-        setCategories([]);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar dados:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const response = await axios.get("http://localhost:8081/api/task");
+    console.log("Tarefas carregadas:", response.data); 
+    setTasks(response.data);
+  } catch (error) {
+    console.error("Erro ao carregar tarefas:", error);
+  }
+};
 
   const fetchCategories = async () => {
   try {
@@ -100,21 +95,24 @@ const handleDeleteCategory = async (id) => {
   if (!newTaskTitle.trim()) return;
 
   try {
-    
-    const response = await axios.post("http://localhost:8081/api/task", {
+    const response = {
       nome: newTaskTitle,      
       descricao: newTaskDescription,
       importancia: newTaskImportance,    
-    });
+      category: selectedCategory ? { id: Number(selectedCategory) } : null 
+    };
+
+    await axios.post("http://localhost:8081/api/task", response);
+
+    await fetchTasks();
     
-    setTasks([...tasks, response.data]);
     setNewTaskTitle("");
+    setNewTaskDescription(""); 
     setNewTaskImportance("Média");
     alert("Tarefa adicionada com sucesso!");
   } catch (error) {
-
-    console.error("Erro ao criar tarefa. Detalhes:", error.response?.data);
-    alert("Erro ao salvar. Verifique o console (F12).");
+    console.error("Erro ao criar tarefa:", error.response?.data);
+    alert("Erro ao salvar. Verifique se uma categoria está selecionada.");
   }
 };
 const handleToggleComplete = async (task) => {
@@ -150,9 +148,11 @@ const handleToggleComplete = async (task) => {
     }
   };
 
-  const filteredTasks = selectedCategory
-    ? tasks.filter(task => task.category?.id === selectedCategory)
-    : tasks;
+const filteredTasks = tasks.filter(task => {
+  if (!selectedCategory) return true; 
+  
+  return task.category && String(task.category.id) === String(selectedCategory);
+});
 
   const completedCount = tasks.filter(t => t.completed).length;
   const pendingCount = tasks.filter(t => !t.completed).length;
@@ -225,19 +225,19 @@ const handleToggleComplete = async (task) => {
                   >
                     Todas
                   </button>
-                  {categories.map(cat => (
-                    <button 
-                      key={cat.id}
-                      className={`filter-chip ${selectedCategory === cat.id ? 'active' : ''}`}
-                      onClick={() => setSelectedCategory(cat.id)}
-                    >
-                      <span 
-                        className="chip-dot" 
-                        style={{background: cat.color || '#6c5ce7'}}
-                      ></span>
-                      {cat.name}
-                    </button>
-                  ))}
+                 {categories.map(cat => (
+                  <button 
+                    key={cat.id}
+                    className={`filter-chip ${selectedCategory === cat.id ? 'active' : ''}`}
+                    onClick={() => setSelectedCategory(cat.id)}
+                  >
+                    <span 
+                      className="chip-dot" 
+                      style={{background: cat.colorCode || '#6c5ce7'}} // CORRIGIDO: colorCode
+                    ></span>
+                    {cat.name}
+                  </button>
+                ))}
                 </div>
               </div>
 
@@ -259,6 +259,18 @@ const handleToggleComplete = async (task) => {
                     onChange={(e) => setNewTaskDescription(e.target.value)} 
                     className="modern-input"
                   />
+                  <select 
+                    value={selectedCategory || ""} 
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="modern-input"
+                  >
+                    <option value="">Sem Categoria</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
                   <select value={newTaskImportance} onChange={(e) => setNewTaskImportance(e.target.value)} 
                   className="modern-input">
                     <option value="Alta">Alta</option>
@@ -349,13 +361,15 @@ const handleToggleComplete = async (task) => {
                   <div className="task-content">
                     <h4 className="task-title">{task.nome}</h4>
                     <div className="task-meta">
-                      {task.category && (
-                        <span 
-                          className="task-category"
-                          style={{
-                            background: `${task.category.color}20`,
-                            color: task.category.color || '#6c5ce7'
-                          }}
+                      {/* BADGE DA CATEGORIA */}
+                        {task.category && (
+                          <span 
+                            className="task-category"
+                            style={{
+                              background: `${task.category.colorCode}20`, 
+                              color: task.category.colorCode,          
+                              border: `1px solid ${task.category.colorCode}`
+                            }}
                         >
                           {task.category.name}
                         </span>

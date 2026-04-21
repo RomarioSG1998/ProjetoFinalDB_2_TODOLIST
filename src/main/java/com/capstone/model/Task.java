@@ -12,6 +12,10 @@ public class Task {
     private String nome;
     private String descricao;
     private String importancia;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -24,4 +28,7 @@ public class Task {
 
     public String getImportancia() { return importancia; }
     public void setImportancia(String importancia) { this.importancia = importancia; }
+
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
 }
