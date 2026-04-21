@@ -30,26 +30,21 @@ function App() {
   };
 
   useEffect(() => {
-    fetchTasks();
-    fetchCategories();
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([fetchTasks(), fetchCategories()]);
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   const fetchTasks = async () => {
     try {
-      const taskResponse = await axios.get("http://localhost:8081/api/task");
-      setTasks(taskResponse.data);
-
-      try {
-        const categoriesRes = await axios.get("http://localhost:8081/api/categories");
-        setCategories(Array.isArray(categoriesRes.data) ? categoriesRes.data : []);
-      } catch (catError) {
-        console.warn("Endpoint de categorias não encontrado");
-        setCategories([]);
-      }
+      const response = await axios.get("http://localhost:8081/api/task");
+      console.log("Tarefas carregadas:", response.data);
+      setTasks(response.data);
     } catch (error) {
-      console.error("Erro ao carregar dados:", error);
-    } finally {
-      setLoading(false);
+      console.error("Erro ao carregar tarefas:", error);
     }
   };
 
@@ -61,7 +56,6 @@ function App() {
       console.error("Erro ao carregar categorias:", error);
     }
   };
-
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
@@ -79,6 +73,7 @@ function App() {
       alert("Erro ao criar. Olhe o console (F12) para o motivo real.");
     }
   };
+
   const handleDeleteCategory = async (id) => {
     if (!window.confirm("Tem certeza que deseja excluir esta categoria?")) return;
 
@@ -95,12 +90,12 @@ function App() {
       alert("Erro ao excluir. Verifique se existem tarefas vinculadas a ela.");
     }
   };
+
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
 
     try {
-
       const payload = {
         nome: newTaskTitle,
         descricao: newTaskDescription,
@@ -119,11 +114,11 @@ function App() {
       setNewTaskImportance("Média");
       alert("Tarefa adicionada com sucesso!");
     } catch (error) {
-
       console.error("Erro ao criar tarefa. Detalhes:", error.response?.data);
       alert("Erro ao salvar. Verifique o console (F12).");
     }
   };
+
   const handleToggleComplete = async (task) => {
     try {
       const isCompleted = task.descricao && task.descricao.includes(" [CONCLUÍDA]");
@@ -157,13 +152,19 @@ function App() {
     }
   };
 
-  const filteredTasks = selectedCategory
-    ? tasks.filter(task => task.category?.id === selectedCategory)
-    : tasks;
+const filteredTasks = tasks.filter(task => {
+  if (!selectedCategory) return true; 
+  
+  return task.category && String(task.category.id) === String(selectedCategory);
+});
 
   const completedCount = tasks.filter(t => t.completed).length;
   const pendingCount = tasks.filter(t => !t.completed).length;
+  const [expandedTaskId, setExpandedTaskId] = useState(null);
 
+  const toggleExpand = (id) => {
+    setExpandedTaskId(expandedTaskId === id ? null : id);
+  };
 
   if (loading) {
     return (
@@ -240,7 +241,7 @@ function App() {
                     >
                       <span
                         className="chip-dot"
-                        style={{ background: cat.color || '#6c5ce7' }}
+                        style={{ background: cat.colorCode || '#6c5ce7' }}
                       ></span>
                       {cat.name}
                     </button>
@@ -266,6 +267,18 @@ function App() {
                     onChange={(e) => setNewTaskDescription(e.target.value)}
                     className="modern-input"
                   />
+                  <select
+                    value={selectedCategory || ""}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="modern-input"
+                  >
+                    <option value="">Sem Categoria</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
                   <select value={newTaskImportance} onChange={(e) => setNewTaskImportance(e.target.value)}
                     className="modern-input">
                     <option value="Alta">Alta</option>
@@ -306,6 +319,18 @@ function App() {
                       style={{ background: cat.color || '#6c5ce7' }}
                     ></div>
                     <span className="category-name">{cat.name}</span>
+                    <button 
+                        className="btn-delete-small"
+                        title="Excluir categoria"
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          handleDeleteCategory(cat.id);
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                      </button>
                     <span className="category-count">
                       {tasks.filter(t => t.category?.id === cat.id).length} tarefas
                     </span>
@@ -355,13 +380,19 @@ function App() {
 
                   <div className="task-content">
                     <h4 className="task-title">{task.nome}</h4>
+                   {task.descricao && (
+                      <p className="task-description-hover">
+                        {task.descricao.replace(" [CONCLUÍDA]", "")}
+                      </p>
+                    )}
                     <div className="task-meta">
                       {task.category && (
                         <span
                           className="task-category"
                           style={{
-                            background: `${task.category.color}20`,
-                            color: task.category.color || '#6c5ce7'
+                            background: `${task.category.colorCode}20`,
+                            color: task.category.colorCode,
+                            border: `1px solid ${task.category.colorCode}`
                           }}
                         >
                           {task.category.name}
@@ -370,8 +401,8 @@ function App() {
                       <span className={`importance-tag ${task.importancia.toLowerCase()}`}>
                         {task.importancia}
                       </span>
-                      <span className={`task-status ${task.completed ? 'done' : 'pending'}`}>
-                        {task.completed ? 'Concluída' : 'Pendente'}
+                      <span className={`task-status ${task.descricao?.includes("[CONCLUÍDA]") ? 'done' : 'pending'}`}>
+                        {task.descricao?.includes("[CONCLUÍDA]") ? 'Concluída' : 'Pendente'}
                       </span>
                     </div>
                   </div>

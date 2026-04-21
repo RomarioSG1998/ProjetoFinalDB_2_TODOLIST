@@ -1,10 +1,18 @@
 package com.capstone.validation;
 
 import com.capstone.model.Task;
+import com.capstone.repository.CategoryRepository;
+
+import jakarta.validation.ValidationException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TaskValidator {
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     public void validateForSave(Task task) {
         if (task.getNome() == null || task.getNome().isBlank()) {
@@ -18,9 +26,16 @@ public class TaskValidator {
         if (task.getImportancia() == null || task.getImportancia().isBlank()) {
             throw new IllegalArgumentException("A importância da tarefa deve ser informada!");
         }
-
         if (task.getUser() == null || task.getUser().getId() == null) {
             throw new IllegalArgumentException("A tarefa deve estar associada a um usuário!");
+        }
+
+        if (task.getCategory() != null && task.getCategory().getId() != null) {
+            boolean exists = categoryRepository.existsById(task.getCategory().getId());
+            if (!exists) {
+                throw new ValidationException("A categoria informada não existe.");
+            }
+        }
         }
     }
 }

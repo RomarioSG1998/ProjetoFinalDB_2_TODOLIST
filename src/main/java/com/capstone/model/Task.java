@@ -12,7 +12,6 @@ public class Task {
     private String nome;
     private String descricao;
     private String importancia;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
