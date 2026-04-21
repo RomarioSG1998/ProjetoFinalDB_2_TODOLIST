@@ -13,6 +13,41 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      - capstone-net
+
+  backend:
+    build: .
+    container_name: capstone_backend
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=capstone
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - db
+    networks:
+      - capstone-net
+
+  frontend:
+    build:
+      context: ./frontend
+      # args:
+      #   - VITE_API_URL=http://localhost:8081
+    container_name: capstone_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - capstone-net
+
+networks:
+  capstone-net:
+    driver: bridge
 
 volumes:
   postgres_data:

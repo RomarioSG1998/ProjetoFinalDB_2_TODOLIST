@@ -1,0 +1,121 @@
+34-2026-04-21T14:07:07.237Z  INFO 1 --- [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+35-2026-04-21T14:07:07.242Z  INFO 1 --- [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+36-Hibernate: select c1_0.id,c1_0.color_code,c1_0.name,c1_0.user_id from categories c1_0 left join users u1_0 on u1_0.id=c1_0.user_id where u1_0.id=?
+37-Hibernate: select t1_0.id,t1_0.category_id,t1_0.descricao,t1_0.importancia,t1_0.nome,t1_0.user_id from tasks t1_0
+38-Hibernate: select c1_0.id,c1_0.color_code,c1_0.name,c1_0.user_id from categories c1_0 where c1_0.id=?
+39-Hibernate: select u1_0.id,u1_0.created_at,u1_0.email,u1_0.password_hash,u1_0.username from users u1_0 where u1_0.id=?
+40-Hibernate: select u1_0.id,u1_0.created_at,u1_0.email,u1_0.password_hash,u1_0.username from users u1_0 where u1_0.id=?
+41-Hibernate: select t1_0.id,c1_0.id,c1_0.color_code,c1_0.name,c1_0.user_id,t1_0.descricao,t1_0.importancia,t1_0.nome,u2_0.id,u2_0.created_at,u2_0.email,u2_0.password_hash,u2_0.username from tasks t1_0 left join categories c1_0 on c1_0.id=t1_0.category_id left join users u2_0 on u2_0.id=t1_0.user_id where t1_0.id=?
+42-Hibernate: select count(*) from categories c1_0 where c1_0.id=?
+43-Hibernate: update tasks set category_id=?,descricao=?,importancia=?,nome=?,user_id=? where id=?
+44-Hibernate: select t1_0.id,c1_0.id,c1_0.color_code,c1_0.name,c1_0.user_id,t1_0.descricao,t1_0.importancia,t1_0.nome,u2_0.id,u2_0.created_at,u2_0.email,u2_0.password_hash,u2_0.username from tasks t1_0 left join categories c1_0 on c1_0.id=t1_0.category_id left join users u2_0 on u2_0.id=t1_0.user_id where t1_0.id=?
+45-Hibernate: select count(*) from categories c1_0 where c1_0.id=?
+46-Hibernate: update tasks set category_id=?,descricao=?,importancia=?,nome=?,user_id=? where id=?
+47-Hibernate: select count(*) from tasks t1_0 where t1_0.id=?
+48-Hibernate: select t1_0.id,c1_0.id,c1_0.color_code,c1_0.name,c1_0.user_id,t1_0.descricao,t1_0.importancia,t1_0.nome,u2_0.id,u2_0.created_at,u2_0.email,u2_0.password_hash,u2_0.username from tasks t1_0 left join categories c1_0 on c1_0.id=t1_0.category_id left join users u2_0 on u2_0.id=t1_0.user_id where t1_0.id=?
+49-Hibernate: delete from tasks where id=?
+50-Hibernate: select count(*) from tasks t1_0 where t1_0.id=?
+51-Hibernate: select t1_0.id,c1_0.id,c1_0.color_code,c1_0.name,c1_0.user_id,t1_0.descricao,t1_0.importancia,t1_0.nome,u2_0.id,u2_0.created_at,u2_0.email,u2_0.password_hash,u2_0.username from tasks t1_0 left join categories c1_0 on c1_0.id=t1_0.category_id left join users u2_0 on u2_0.id=t1_0.user_id where t1_0.id=?
+52-Hibernate: delete from tasks where id=?
+53-Hibernate: insert into categories (color_code,name,user_id) values (?,?,?)
+54:2026-04-21T14:12:14.607Z ERROR 1 --- [nio-8081-exec-4] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: jakarta.validation.ConstraintViolationException: Validation failed for classes [com.capstone.model.Category] during persist time for groups [jakarta.validation.groups.Default, ]
+55-List of constraint violations:[
+56-	ConstraintViolationImpl{interpolatedMessage='O nome da categoria não pode ficar em branco', propertyPath=name, rootBeanClass=class com.capstone.model.Category, messageTemplate='O nome da categoria não pode ficar em branco'}
+57-]] with root cause
+58-
+59-jakarta.validation.ConstraintViolationException: Validation failed for classes [com.capstone.model.Category] during persist time for groups [jakarta.validation.groups.Default, ]
+60-List of constraint violations:[
+61-	ConstraintViolationImpl{interpolatedMessage='O nome da categoria não pode ficar em branco', propertyPath=name, rootBeanClass=class com.capstone.model.Category, messageTemplate='O nome da categoria não pode ficar em branco'}
+62-]
+63-	at org.hibernate.boot.beanvalidation.BeanValidationEventListener.validate(BeanValidationEventListener.java:151) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+64-	at org.hibernate.boot.beanvalidation.BeanValidationEventListener.onPreInsert(BeanValidationEventListener.java:81) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+65-	at org.hibernate.action.internal.EntityIdentityInsertAction.preInsert(EntityIdentityInsertAction.java:186) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+66-	at org.hibernate.action.internal.EntityIdentityInsertAction.execute(EntityIdentityInsertAction.java:75) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+67-	at org.hibernate.engine.spi.ActionQueue.execute(ActionQueue.java:670) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+68-	at org.hibernate.engine.spi.ActionQueue.addResolvedEntityInsertAction(ActionQueue.java:291) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+69-	at org.hibernate.engine.spi.ActionQueue.addInsertAction(ActionQueue.java:272) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+70-	at org.hibernate.engine.spi.ActionQueue.addAction(ActionQueue.java:322) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+71-	at org.hibernate.event.internal.AbstractSaveEventListener.addInsertAction(AbstractSaveEventListener.java:386) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+72-	at org.hibernate.event.internal.AbstractSaveEventListener.performSaveOrReplicate(AbstractSaveEventListener.java:300) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+73-	at org.hibernate.event.internal.AbstractSaveEventListener.performSave(AbstractSaveEventListener.java:219) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+74-	at org.hibernate.event.internal.AbstractSaveEventListener.saveWithGeneratedId(AbstractSaveEventListener.java:134) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+75-	at org.hibernate.event.internal.DefaultPersistEventListener.entityIsTransient(DefaultPersistEventListener.java:175) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+76-	at org.hibernate.event.internal.DefaultPersistEventListener.persist(DefaultPersistEventListener.java:93) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+77-	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:77) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+78-	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:54) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+79-	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+80-	at org.hibernate.internal.SessionImpl.firePersist(SessionImpl.java:754) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+81-	at org.hibernate.internal.SessionImpl.persist(SessionImpl.java:738) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+82-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+83-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source) ~[na:na]
+84-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source) ~[na:na]
+85-	at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
+86-	at org.springframework.orm.jpa.ExtendedEntityManagerCreator$ExtendedEntityManagerInvocationHandler.invoke(ExtendedEntityManagerCreator.java:364) ~[spring-orm-6.1.6.jar!/:6.1.6]
+87-	at jdk.proxy2/jdk.proxy2.$Proxy116.persist(Unknown Source) ~[na:na]
+88-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+89-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source) ~[na:na]
+90-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source) ~[na:na]
+91-	at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
+92-	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:319) ~[spring-orm-6.1.6.jar!/:6.1.6]
+93-	at jdk.proxy2/jdk.proxy2.$Proxy116.persist(Unknown Source) ~[na:na]
+94-	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.save(SimpleJpaRepository.java:618) ~[spring-data-jpa-3.2.5.jar!/:3.2.5]
+95-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+96-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source) ~[na:na]
+97-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source) ~[na:na]
+98-	at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
+99-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:354) ~[spring-aop-6.1.6.jar!/:6.1.6]
+100-	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+101-	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+102-	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+103-	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:516) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+104-	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:285) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+105-	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:628) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+106-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.6.jar!/:6.1.6]
+107-	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:168) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+108-	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:143) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+109-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.6.jar!/:6.1.6]
+110-	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:70) ~[spring-data-commons-3.2.5.jar!/:3.2.5]
+111-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.6.jar!/:6.1.6]
+112-	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-6.1.6.jar!/:6.1.6]
+113-	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:392) ~[spring-tx-6.1.6.jar!/:6.1.6]
+114-	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.1.6.jar!/:6.1.6]
+115-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.6.jar!/:6.1.6]
+116-	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-6.1.6.jar!/:6.1.6]
+117-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.6.jar!/:6.1.6]
+118-	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:164) ~[spring-data-jpa-3.2.5.jar!/:3.2.5]
+119-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.6.jar!/:6.1.6]
+120-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.1.6.jar!/:6.1.6]
+121-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.6.jar!/:6.1.6]
+122-	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) ~[spring-aop-6.1.6.jar!/:6.1.6]
+123-	at jdk.proxy2/jdk.proxy2.$Proxy119.save(Unknown Source) ~[na:na]
+124-	at com.capstone.service.CategoryService.save(CategoryService.java:24) ~[!/:1.0.0]
+125-	at com.capstone.controller.CategoryController.createCategory(CategoryController.java:27) ~[!/:1.0.0]
+126-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+127-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source) ~[na:na]
+128-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source) ~[na:na]
+129-	at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
+130-	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.6.jar!/:6.1.6]
+131-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.6.jar!/:6.1.6]
+132-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+133-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+134-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+135-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+136-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+137-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+138-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+139-	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+140-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.20.jar!/:na]
+141-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+142-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.20.jar!/:na]
+143-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:206) ~[tomcat-embed-core-10.1.20.jar!/:na]
+144-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+145-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.20.jar!/:na]
+146-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+147-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+148-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.6.jar!/:6.1.6]
+149-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+150-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+151-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+152-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.6.jar!/:6.1.6]
+153-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+154-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]

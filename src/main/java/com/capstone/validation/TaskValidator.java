@@ -36,6 +36,5 @@ public class TaskValidator {
                 throw new ValidationException("A categoria informada não existe.");
             }
         }
-        }
     }
 }

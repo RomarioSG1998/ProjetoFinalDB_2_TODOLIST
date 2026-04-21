@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
+
 function App() {
   const [tasks, setTasks] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -40,7 +42,7 @@ function App() {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/api/task");
+      const response = await axios.get(`${API_BASE_URL}/api/task`);
       console.log("Tarefas carregadas:", response.data);
       setTasks(response.data);
     } catch (error) {
@@ -50,7 +52,7 @@ function App() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:8081/api/categories/user/1');
+      const response = await axios.get(`${API_BASE_URL}/api/categories/user/1`);
       setCategories(response.data);
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
@@ -59,9 +61,13 @@ function App() {
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
+    if (!newCategoryName.trim()) {
+      alert("Por favor, informe o nome da categoria.");
+      return;
+    }
     try {
-      const response = await axios.post("http://localhost:8081/api/categories", {
-        name: newCategoryName,
+      const response = await axios.post(`${API_BASE_URL}/api/categories`, {
+        name: newCategoryName.trim(),
         colorCode: "#" + Math.floor(Math.random() * 16777215).toString(16),
         user: { id: 1 }
       });
@@ -78,7 +84,7 @@ function App() {
     if (!window.confirm("Tem certeza que deseja excluir esta categoria?")) return;
 
     try {
-      await axios.delete(`http://localhost:8081/api/categories/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/categories/${id}`);
 
       setCategories(prev => prev.filter(cat => cat.id !== id));
 
@@ -107,7 +113,7 @@ function App() {
         payload.category = { id: selectedCategory };
       }
 
-      const response = await axios.post("http://localhost:8081/api/task", payload);
+      const response = await axios.post(`${API_BASE_URL}/api/task`, payload);
 
       setTasks([...tasks, response.data]);
       setNewTaskTitle("");
@@ -132,7 +138,7 @@ function App() {
 
       const updatedTask = { ...task, descricao: novaDescricao };
 
-      const response = await axios.put(`http://localhost:8081/api/task/${task.id}`, updatedTask);
+      const response = await axios.put(`${API_BASE_URL}/api/task/${task.id}`, updatedTask);
 
       setTasks(prev => prev.map(t => t.id === task.id ? response.data : t));
 
@@ -145,7 +151,7 @@ function App() {
   const handleDeleteTask = async (id) => {
     if (!window.confirm("Excluir esta tarefa?")) return;
     try {
-      await axios.delete(`http://localhost:8081/api/task/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/task/${id}`);
       setTasks(prev => prev.filter(task => task.id !== id));
     } catch (error) {
       console.error("Erro ao excluir:", error);
@@ -316,7 +322,7 @@ const filteredTasks = tasks.filter(task => {
                   <div key={cat.id} className="category-card">
                     <div
                       className="category-color-indicator"
-                      style={{ background: cat.color || '#6c5ce7' }}
+                      style={{ background: cat.colorCode || '#6c5ce7' }}
                     ></div>
                     <span className="category-name">{cat.name}</span>
                     <button 
