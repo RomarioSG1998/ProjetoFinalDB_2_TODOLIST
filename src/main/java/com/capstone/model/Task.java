@@ -13,6 +13,8 @@ public class Task {
     private String nome;
     private String descricao;
     private String importancia;
+    private boolean completed;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -22,6 +24,7 @@ public class Task {
     @JoinColumn(name = "category_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Category category;
+
     public Long getId() {
         return id;
     }
@@ -52,6 +55,14 @@ public class Task {
 
     public void setImportancia(String importancia) {
         this.importancia = importancia;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     public User getUser() {

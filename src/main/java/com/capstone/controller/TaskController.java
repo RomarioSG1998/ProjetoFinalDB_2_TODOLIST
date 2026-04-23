@@ -45,15 +45,20 @@ public class TaskController {
     }
 
     @PutMapping("/task/{id}")
-    public Task atualizar(@PathVariable Long id, @RequestBody Task taskDetails) {
-        return taskRepository.findById(id).map(task -> {
-            
-            task.setNome(taskDetails.getNome());
-            task.setDescricao(taskDetails.getDescricao());
-            task.setImportancia(taskDetails.getImportancia());
-            taskValidator.validateForSave(task);
- 
-            return taskRepository.save(task);
-        }).orElseThrow(() -> new RuntimeException("Tarefa não encontrada com o id: " + id));
+public Task atualizar(@PathVariable Long id, @RequestBody Task taskDetails) {
+    return taskRepository.findById(id).map(task -> {
+        task.setNome(taskDetails.getNome());
+        task.setDescricao(taskDetails.getDescricao());
+        task.setImportancia(taskDetails.getImportancia());
+        
+        task.setCompleted(taskDetails.isCompleted()); 
+
+        if (taskDetails.getCategory() != null) {
+            task.setCategory(taskDetails.getCategory());
+        }
+
+        taskValidator.validateForSave(task); 
+        return taskRepository.save(task);
+    }).orElseThrow(() -> new RuntimeException("Tarefa não encontrada com o id: " + id));
     }
 }
