@@ -2,6 +2,8 @@ package com.capstone.controller;
 
 import com.capstone.model.Category;
 import com.capstone.service.CategoryService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
+    @Autowired
     private final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService) {
@@ -44,12 +47,14 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.findByUserId(userId));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        if (categoryService.existsById(id)) {
-            return ResponseEntity.ok(categoryService.update(id, category));
+   @PutMapping("/{id}")
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails) {
+        try {
+            Category atualizada = categoryService.update(id, categoryDetails);
+            return ResponseEntity.ok(atualizada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

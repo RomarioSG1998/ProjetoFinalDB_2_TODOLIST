@@ -138,6 +138,42 @@ const handleToggleComplete = async (task) => {
   }
 };
 
+const handleEditTask = async (task) => {
+  const novoNome = window.prompt("Editar nome da tarefa:", task.nome);
+  
+  if (novoNome && novoNome !== task.nome) {
+    try {
+      const taskAtualizada = { 
+        ...task, 
+        nome: novoNome 
+      };
+
+      await axios.put(`http://localhost:8081/api/task/${task.id}`, taskAtualizada);
+      
+      fetchTasks(); 
+    } catch (error) {
+      console.error("Erro ao editar tarefa:", error);
+      alert("Erro ao salvar alteração no banco.");
+    }
+  }
+};
+
+const handleEditCategory = async (category) => {
+  const novoNome = window.prompt("Editar nome da categoria:", category.name);
+
+  if (novoNome && novoNome !== category.name) {
+    try {
+      const catAtualizada = { ...category, name: novoNome };
+      await axios.put(`http://localhost:8081/api/categories/${category.id}`, catAtualizada);
+
+      fetchCategories(); 
+      fetchTasks();     
+    } catch (error) {
+      console.error("Erro ao editar categoria:", error);
+    }
+  }
+};
+
   const handleDeleteTask = async (id) => {
     if (!window.confirm("Excluir esta tarefa?")) return;
     try {
@@ -316,18 +352,28 @@ const toggleExpand = (id) => {
                       style={{background: cat.color || '#6c5ce7'}}
                     ></div>
                     <span className="category-name">{cat.name}</span>
+                   <div className="category-actions">
                     <button 
-                        className="btn-delete-small"
-                        title="Excluir categoria"
-                        onClick={(e) => {
-                          e.stopPropagation(); 
-                          handleDeleteCategory(cat.id);
-                        }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
-                      </button>
+                      className="category-btn-edit" 
+                      onClick={() => handleEditCategory(cat)} 
+                      title="Editar Categoria"
+                    >
+                      <span>✏️</span>
+                    </button>
+
+                    <button 
+                      className="btn-delete-small"
+                      title="Excluir categoria"
+                      onClick={(e) => {
+                        e.stopPropagation(); 
+                        handleDeleteCategory(cat.id);
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                      </svg>
+                    </button>
+                  </div>
                     <span className="category-count">
                       {tasks.filter(t => t.category?.id === cat.id).length} tarefas
                     </span>
@@ -404,6 +450,10 @@ const toggleExpand = (id) => {
                       </span>
                     </div>
                   </div>
+                  <button 
+                   className="btn-edit" onClick={() => handleEditTask(task)}>
+                     <span style={{ fontSize: '1.2rem' }}>✏️</span>
+                  </button>
 
                   <button 
                     className="btn-delete"

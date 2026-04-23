@@ -12,6 +12,7 @@ public class Task {
     private String nome;
     private String descricao;
     private String importancia;
+    private boolean completed;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -31,4 +32,7 @@ public class Task {
 
     public Category getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }
+
+    public boolean isCompleted() { return completed; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
 }
