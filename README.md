@@ -1,73 +1,113 @@
-# Projeto Capstone - Backend To-Do List (Banco de Dados II - Jala University)
+# 📋 ProjetaFinalDB - To-Do List Application
 
-> [!IMPORTANT]
-> **Aviso:** A aplicação utiliza a estrutura MVC completa na raiz `com.capstone` isolando apropriadamente as camadas de "Controller", "Model", "Repository", "Service" e "Validation".
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
 
-> [!NOTE]
-> **Atenção Maycon:** Esta branch `main` agora incorpora todas as implementações da sua branch `mayconbranch` (incluindo o Frontend e as refatorações). A única mudança adicional que fizemos foi garantir a **preservação do hash nativo** de senhas no `UserRepository.java`, para que a segurança via banco de dados continue funcionando corretamente.
-
-Este projeto é o **Backend (REST API)** do aplicativo **To-Do List** da disciplina de Banco de Dados II da Jala University. Ele utiliza Spring Boot (Java) e um container Docker com um banco PostgreSQL.
-
-Esta documentação foi reformulada como um **Guia de Integração** para auxiliar o time de Frontend (fala, Maycon!) no consumo rápido e objetivo das APIs para conectar a interface.
+Uma aplicação Full Stack robusta para gerenciamento de tarefas, desenvolvida como projeto final para a disciplina de **Banco de Dados II** na **Jala University**. A solução integra um backend Spring Boot performático com um banco de dados PostgreSQL seguro e um frontend moderno em React (Vite).
 
 ---
 
-## 🚀 Guia Rápido de Instalação (Ambiente Local)
+## 🏗️ Arquitetura do Sistema
 
-### 1. Subindo o Banco de Dados
-Certifique-se de ter o Docker instalado e rodando. Na raiz do projeto, suba o contêiner do PostgreSQL via terminal:
-```bash
-docker compose up -d
-```
-*O banco estará operando em `localhost:5433` (Credenciais padrão: `postgres/postgres`).*
+A aplicação segue uma arquitetura moderna e escalável, utilizando containers Docker para orquestração de todos os serviços.
 
-### 2. Rodando a API (Spring Boot)
-Instale as dependências e rode a aplicação via Maven logo em seguida:
-```bash
-mvn clean compile
-mvn spring-boot:run
+```mermaid
+graph TD
+    User((Usuário)) --> Frontend[React/Vite App]
+    Frontend --> Nginx[Nginx Proxy]
+    Nginx --> Backend[Spring Boot API]
+    Backend --> Database[(PostgreSQL)]
+    
+    subgraph "Docker Environment"
+        Nginx
+        Backend
+        Database
+    end
 ```
-*A API ficará disponível e pronta para receber as requisições na URL base: **`http://localhost:8081`**.*
 
 ---
 
-## 🔌 Guia de Integração da API para o Frontend (Maycon)
+## 🚀 Funcionalidades Principais
 
-**URL Base:** `http://localhost:8081`
-**Formato de Envio/Retorno:** `application/json`
+- **Autenticação Segura**: Gerenciamento de usuários com senhas criptografadas nativamente no banco de dados via `pgcrypto`.
+- **Gestão de Categorias**: Organize suas tarefas por categorias personalizadas com cores identificadoras.
+- **Controle de Tarefas (CRUD)**: Fluxo completo de criação, visualização, atualização e remoção de tarefas.
+- **Filtros Dinâmicos**: Filtragem inteligente por usuário e categoria.
+- **Interface Responsiva**: Design moderno com suporte a Dark Mode e animações fluidas.
 
-### 👤 Módulo de Usuários (`/api/users`)
-Responsável pelas contas contendo regras de negócio seguras (como o e-mail que não pode se repetir).
+---
 
-> 🔒 **Segurança (DB Hash):** O processamento de hash das senhas e a verificação de credenciais são feitos nativamente pelo próprio banco de dados (PostgreSQL) usando a extensão `pgcrypto`. O backend em Java não manipula o hash localmente, delegando todo o processo de criptografia e checagem diretamente ao SGBD.
+## 🛠️ Tecnologias Utilizadas
 
-- **`POST /api/users`** - Cria um usuário.
-  - **Payload esperado:** `{"username":"Maycon", "email":"maycon@teste.com", "passwordHash":"senhaDificil123"}`
-- **`GET /api/users`** - Lista todos os usuários cadastrados.
-- **`GET /api/users/{id}`** - Busca as informações de um usuário específico.
-- **`PUT /api/users/{id}`** - Atualiza dados do usuário.
-  - **Payload esperado:** Os mesmos campos do envio (username, email e passwordHash).
-- **`DELETE /api/users/{id}`** - Exclui o usuário permanentemente do banco.
+### Backend
+- **Java 17** & **Spring Boot 3.x**
+- **Spring Data JPA** (Hibernate)
+- **Spring Validation**
+- **Maven** (Gerenciamento de dependências)
 
-### 🎨 Módulo de Categorias (`/api/categories`)
-Responsável por gerenciar os grupos e cores das atividades no kanban. Já conta com verificação Regex garantindo que as cores do Frontend entrem corretas no banco!
+### Frontend
+- **React 18** & **Vite**
+- **Axios** (Integração com API)
+- **Vanilla CSS** (Design moderno e responsivo)
 
-- **`POST /api/categories`** - Cria uma categoria.
-  - **Payload esperado:** `{"name":"Trabalho", "colorCode":"#FF0000", "user":{"id": 1}}` *(Atenção Maycon: é obrigatório engatilhar o JSON com a associação do ID do usuário dono desta categoria)*.
-- **`GET /api/categories`** - Lista todas as categorias gerais.
-- **`GET /api/categories/{id}`** - Busca os detalhes de apenas uma categoria.
-- **`GET /api/categories/user/{userId}`** - **⚡ Rota Principal:** Retorna como JSON um array contendo *apenas* as categorias pertencentes a um usuário em específico.
-- **`PUT /api/categories/{id}`** - Altera o nome e cor de uma categoria.
-  - **Payload esperado:** `{"name": "Trabalho Modificado", "colorCode":"#0000FF"}`
-- **`DELETE /api/categories/{id}`** - Deleta a categoria.
+### Infraestrutura
+- **PostgreSQL 15** (Extensão `pgcrypto` para segurança)
+- **Docker & Docker Compose**
+- **Nginx** (Servidor de arquivos estáticos e Load Balancer)
 
-### 📋 Módulo de Tasks (`/api/task`)
-Módulo responsável pelas tarefas do To-Do List. Todas as operações CRUD estão funcionais e incluem validação de campos obrigatórios.
+---
 
-- **`POST /api/task`** - Insere uma nova tarefa.
-  - **Payload esperado:** `{"nome": "Comprar queijo", "descricao": "Ir ao mercado CSD", "importancia": "Alta"}`
-- **`GET /api/task`** - Lista todas as tarefas cadastradas.
-- **`GET /api/task/{id}`** - Busca os detalhes de uma tarefa específica.
-- **`PUT /api/task/{id}`** - Atualiza os dados de uma tarefa existente.
-  - **Payload esperado:** `{"nome": "Tarefa Editada", "descricao": "Nova descrição", "importancia": "Baixa"}`
-- **`DELETE /api/task/{id}`** - Exclui permanentemente a tarefa pelo ID.
+## 🚦 Como Executar
+
+A maneira mais rápida e fácil de rodar o projeto localmente é utilizando o Docker Compose, que automatiza a configuração de todo o ambiente.
+
+### Pré-requisitos
+- [Docker](https://www.docker.com/) instalado.
+- [Docker Compose](https://docs.docker.com/compose/) instalado.
+
+### Passo a Passo
+1. **Clone o repositório**:
+   ```bash
+   git clone https://github.com/RomarioSG1998/ProjetoFinalDB_2_TODOLIST.git
+   cd ProjetoFinalDB_2_TODOLIST
+   ```
+
+2. **Inicie os containers**:
+   ```bash
+   docker-compose up --build -d
+   ```
+
+3. **Acesse as aplicações**:
+   - **Frontend**: [http://localhost](http://localhost)
+   - **Backend API**: [http://localhost:8081](http://localhost:8081)
+   - **Documentação API (DML/DDL)**: Disponível na pasta `/scripts_sql`
+
+---
+
+## 📖 Estrutura de Diretórios
+
+```text
+.
+├── frontend/           # Aplicação React (interface do usuário)
+├── src/                # Código fonte do Backend (Java/Spring)
+├── scripts_sql/        # Definições de Banco de Dados (DDL e DML)
+├── docker-compose.yml  # Orquestração de containers local
+└── README.md           # Você está aqui
+```
+
+---
+
+## 🔒 Segurança e Banco de Dados
+
+Um diferencial deste projeto é a delegação da segurança ao SGBD. Todas as hashes de senhas são geradas e verificadas diretamente pelo PostgreSQL utilizando a extensão `pgcrypto`, garantindo que senhas em texto puro nunca sejam expostas, nem mesmo na camada de aplicação.
+
+---
+
+## 📝 Licença
+
+Este projeto foi desenvolvido para fins educacionais na **Jala University**.
+
+Desenvolvido por **Romário Jala** e Equipe. 🚀
